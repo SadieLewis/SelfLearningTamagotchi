@@ -1,5 +1,6 @@
 import pygame
-
+#from environment import TamagotchiEnv
+#from agent import QLearner
 ##use tarakotchi sprites
 
 def start_screen(window):
@@ -11,10 +12,15 @@ def start_screen(window):
     text_story4 = "If it does poorly it will get a punishment"
     text_story5 = "Watch as it learns and starts to care for itself!"
     text_story6 = "Enjoy your new friend, completely independent!"
+    text_story7 = "Press enter/return to start"
+    tamagotchi_img = pygame.image.load("pinktamagotchi.png").convert_alpha()
+    tam_img = pygame.transform.scale(tamagotchi_img, (200, 270))
     font_name1 = pygame.font.match_font('ravie')
     font_name2 = pygame.font.match_font('lucidasanstypewriter')
+    font_name3 = pygame.font.match_font('copperplategothic')
     font1 = pygame.font.Font(font_name1, 37)
     font2 = pygame.font.Font(font_name2, 16)
+    font3 = pygame.font.Font(font_name3, 20)
     text_title_font = font1.render("Self Learning Tamagotchi", True, "lightpink2")
     text1_story = font2.render(text_story1, True, "lightpink2")
     text2_story = font2.render(text_story2, True, "lightpink2")
@@ -22,6 +28,8 @@ def start_screen(window):
     text4_story = font2.render(text_story4, True, "lightpink2")
     text5_story = font2.render(text_story5, True, "lightpink2")
     text6_story = font2.render(text_story6, True, "lightpink2")
+    text7_story = font3.render(text_story7, True, "pink")
+    img_rect = tam_img.get_rect(center=(window_size[0] // 2, window_size[1] // 1.5))
     text_title_spot = text_title_font.get_rect(center=(window_size[0] // 2, window_size[1] // 8))
     text1_story_spot = text1_story.get_rect(center=(window_size[0] // 2, window_size[1] // 4.5))
     text2_story_spot = text2_story.get_rect(center=(window_size[0] // 2, window_size[1] // 3.8))
@@ -29,6 +37,7 @@ def start_screen(window):
     text4_story_spot = text4_story.get_rect(center=(window_size[0] // 2, window_size[1] // 2.85))
     text5_story_spot = text5_story.get_rect(center=(window_size[0] // 2, window_size[1] // 2.55))
     text6_story_spot = text6_story.get_rect(center=(window_size[0] // 2, window_size[1] // 2.3))
+    text7_story_spot = text7_story.get_rect(center=(window_size[0] // 2, window_size[1] // 1.1))
     window.fill("maroon4")
     window.blit(text_title_font, text_title_spot)
     window.blit(text1_story, text1_story_spot)
@@ -37,6 +46,8 @@ def start_screen(window):
     window.blit(text4_story, text4_story_spot)
     window.blit(text5_story, text5_story_spot)
     window.blit(text6_story, text6_story_spot)
+    window.blit(text7_story, text7_story_spot)
+    window.blit(tam_img, img_rect)
     print(pygame.font.get_fonts())
     pygame.display.flip()
     go = True
@@ -46,12 +57,31 @@ def start_screen(window):
                 if event.key == pygame.K_RETURN:
                     go = False
 
+def sim_screen(window, env, agent):
+    clock = pygame.time.Clock()
+    state = env.reset()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        action = agent.choose_action(state)
+        next_state, reward = env.step(action)
+        agent.update(state, action, reward, next_state)
+        state = next_state
+        window.fill("maroon4")
+        # draw sprite based on state
+        # draw text: state, action, reward
+        pygame.display.flip()
+        clock.tick(5)
+
 
 
 def main():
     pygame.init()
     surface = pygame.display.set_mode((700, 700))
     start_screen(surface)
+    #sim_screen(surface, env, agent)
     pygame.quit()
 
 if __name__ == "__main__":
