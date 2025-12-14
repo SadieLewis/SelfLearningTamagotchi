@@ -64,15 +64,15 @@ def sim_screen(window, env, agent):
     clock = pygame.time.Clock()
     window_size = window.get_size()
     font_name = pygame.font.match_font('copperplategothic')
-    font = pygame.font.Font(font_name, 20)
+    font = pygame.font.Font(font_name, 30)
     hungrytama_img = pygame.transform.scale(
-        pygame.image.load("hungrytama.png").convert_alpha(), (100, 130)
+        pygame.image.load("hungrytama.png").convert_alpha(), (110, 140)
     )
     energytama_img = pygame.transform.scale(
-        pygame.image.load("energetictama.png").convert_alpha(), (100, 130)
+        pygame.image.load("energetictama.png").convert_alpha(), (110, 140)
     )
     sleepytama_img = pygame.transform.scale(
-        pygame.image.load("sleepytama.png").convert_alpha(), (100, 130)
+        pygame.image.load("sleepytama.png").convert_alpha(), (110, 140)
     )
     tama_img = pygame.transform.scale(
         pygame.image.load("pinktamagotchi.png").convert_alpha(), (400, 550)
@@ -85,7 +85,7 @@ def sim_screen(window, env, agent):
     }
     #locate images
     img_rect = hungrytama_img.get_rect(
-        center=(window_size[0] // 2, window_size[1] // 2.28)
+        center=(window_size[0] // 2, window_size[1] // 2.35)
     )
     tama_rect = tama_img.get_rect(
         center=(window_size[0] // 2, window_size[1] // 2.57)
@@ -125,10 +125,10 @@ def sim_screen(window, env, agent):
             match_str, True, "lightpink2"
         )
         #display updating data
-        window.blit(state_text, (280, 570))
-        window.blit(action_text, (280, 600))
-        window.blit(reward_text, (280, 630))
-        window.blit(match_text, (280, 660))
+        window.blit(state_text, (245, 570))
+        window.blit(action_text, (245, 600))
+        window.blit(reward_text, (245, 630))
+        window.blit(match_text, (245, 660))
         pygame.display.flip()
         #switch to another random state
         state = next_state
