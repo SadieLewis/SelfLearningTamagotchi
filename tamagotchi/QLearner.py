@@ -1,4 +1,4 @@
-from QTable import QTable
+from tamagotchi.QTable import QTable
 class QLearner:
     def __init__(self, num_states, num_actions):
         self.qtable = QTable(num_states, num_actions, start_state=0)
