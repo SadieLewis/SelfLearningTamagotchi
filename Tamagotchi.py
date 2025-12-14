@@ -1,10 +1,11 @@
 import pygame
-#from environment import TamagotchiEnv
-#from agent import QLearner
+from environment import TamagotchiEnv
+from QTable import QTable
 ##use tarakotchi sprites
 
 def start_screen(window):
     window_size = window.get_size()
+    #Text
     pygame.display.set_caption("Self Learning Tamagotchi")
     text_story1 = "You have a new tamagotchi friend!"
     text_story2 = "Once you start it up, it will start learning how to care for itself!"
@@ -13,8 +14,18 @@ def start_screen(window):
     text_story5 = "Watch as it learns and starts to care for itself!"
     text_story6 = "Enjoy your new friend, completely independent!"
     text_story7 = "Press enter/return to start"
+    #Images/Sprite imgs
     tamagotchi_img = pygame.image.load("pinktamagotchi.png").convert_alpha()
     tam_img = pygame.transform.scale(tamagotchi_img, (200, 270))
+    haptama_img = pygame.image.load("happytama.png").convert_alpha()
+    happytama_img = pygame.transform.scale(haptama_img, (100, 130))
+    enetama_img = pygame.image.load("energetictama.png").convert_alpha()
+    energytama_img = pygame.transform.scale(enetama_img, (100, 130))
+    huntama_img = pygame.image.load("hungrytama.png").convert_alpha()
+    hungrytama_img = pygame.transform.scale(huntama_img, (100, 130))
+    sletama_img = pygame.image.load("sleepytama.png").convert_alpha()
+    sleepytama_img = pygame.transform.scale(sletama_img, (110, 130))
+    #Formatting
     font_name1 = pygame.font.match_font('ravie')
     font_name2 = pygame.font.match_font('lucidasanstypewriter')
     font_name3 = pygame.font.match_font('copperplategothic')
@@ -29,7 +40,12 @@ def start_screen(window):
     text5_story = font2.render(text_story5, True, "lightpink2")
     text6_story = font2.render(text_story6, True, "lightpink2")
     text7_story = font3.render(text_story7, True, "pink")
-    img_rect = tam_img.get_rect(center=(window_size[0] // 2, window_size[1] // 1.5))
+    #Where everything gets organized
+    tamagotchi_img_rect = tam_img.get_rect(center=(window_size[0] // 2, window_size[1] // 1.5))
+    happytama_img_rect = happytama_img.get_rect(center=(window_size[0] // 1.15, window_size[1] // 1.8))
+    energytama_img_rect = energytama_img.get_rect(center=(window_size[0] // 7, window_size[1] // 1.8))
+    hungrytama_img_rect = hungrytama_img.get_rect(center=(window_size[0] // 7, window_size[1] // 1.3))
+    sleepytama_img_rect = sleepytama_img.get_rect(center=(window_size[0] // 1.15, window_size[1] // 1.3))
     text_title_spot = text_title_font.get_rect(center=(window_size[0] // 2, window_size[1] // 8))
     text1_story_spot = text1_story.get_rect(center=(window_size[0] // 2, window_size[1] // 4.5))
     text2_story_spot = text2_story.get_rect(center=(window_size[0] // 2, window_size[1] // 3.8))
@@ -38,6 +54,7 @@ def start_screen(window):
     text5_story_spot = text5_story.get_rect(center=(window_size[0] // 2, window_size[1] // 2.55))
     text6_story_spot = text6_story.get_rect(center=(window_size[0] // 2, window_size[1] // 2.3))
     text7_story_spot = text7_story.get_rect(center=(window_size[0] // 2, window_size[1] // 1.1))
+    #Display
     window.fill("maroon4")
     window.blit(text_title_font, text_title_spot)
     window.blit(text1_story, text1_story_spot)
@@ -47,7 +64,12 @@ def start_screen(window):
     window.blit(text5_story, text5_story_spot)
     window.blit(text6_story, text6_story_spot)
     window.blit(text7_story, text7_story_spot)
-    window.blit(tam_img, img_rect)
+    window.blit(tam_img, tamagotchi_img_rect)
+    window.blit(happytama_img, happytama_img_rect)
+    window.blit(energytama_img, energytama_img_rect)
+    window.blit(hungrytama_img, hungrytama_img_rect)
+    window.blit(sleepytama_img, sleepytama_img_rect)
+
     print(pygame.font.get_fonts())
     pygame.display.flip()
     go = True
@@ -57,21 +79,24 @@ def start_screen(window):
                 if event.key == pygame.K_RETURN:
                     go = False
 
-def sim_screen(window, env, agent):
+def sim_screen(window, env, qtable):
     clock = pygame.time.Clock()
-    state = env.reset()
+    state = env.reset()  # int state
+    reward = 0  # initial reward
+    action = qtable.getLastAction()
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        action = agent.choose_action(state)
+        # Environment responds to action
         next_state, reward = env.step(action)
-        agent.update(state, action, reward, next_state)
+        # QTable learns AND selects next action
+        action = qtable.senseActLearn(next_state, reward)
         state = next_state
         window.fill("maroon4")
         # draw sprite based on state
-        # draw text: state, action, reward
+        # draw text for state, action, reward
         pygame.display.flip()
         clock.tick(5)
 
@@ -80,8 +105,19 @@ def sim_screen(window, env, agent):
 def main():
     pygame.init()
     surface = pygame.display.set_mode((700, 700))
+    #env = TamagotchiEnv()
+    #num_states = env.num_states
+    #num_actions = env.num_actions
+    #qtable = QTable(
+    #    states=num_states,
+    #    actions=num_actions,
+    #    startState=env.reset(),
+    #    targetVisits=10,
+    #    rateConstant=5,
+     #   discount=0.9
+    #)
     start_screen(surface)
-    #sim_screen(surface, env, agent)
+    #sim_screen(surface, env, qtable)
     pygame.quit()
 
 if __name__ == "__main__":
