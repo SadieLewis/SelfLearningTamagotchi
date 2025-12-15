@@ -64,6 +64,7 @@ def sim_screen(window, env, agent):
     clock = pygame.time.Clock()
     window_size = window.get_size()
     font = pygame.font.Font(pygame.font.match_font('copperplategothic'), 30)
+    font1 = pygame.font.Font(pygame.font.match_font('copperplategothic'), 20)
     #image-state correlation
     state_images = {
         0: pygame.transform.scale(pygame.image.load("hungrytama.png"), (110, 140)),
@@ -87,6 +88,7 @@ def sim_screen(window, env, agent):
     reward = 0
     reward_total = 0
     agent.act_and_learn(state, reward)
+    iteration_count = 0
     running = True
     while running:
         for event in pygame.event.get():
@@ -97,6 +99,7 @@ def sim_screen(window, env, agent):
         action = agent.last_action
         next_state, reward = env.step(action)
         reward_total += reward
+        iteration_count += 1
         #tracks matching for visuals
         if reward > 0:
             match_str = "Correct match!"
@@ -107,6 +110,7 @@ def sim_screen(window, env, agent):
         window.blit(tama_img, tama_rect)
         window.blit(state_images.get(state, state_images[0]), img_rect)
         # display updating data#display updating data
+        window.blit(font1.render(f"Iterations: {iteration_count}", True, "lightpink2"), (10,630))
         window.blit(font.render(f"State: {env.states[state]}", True, "lightpink2"), (245, 570))
         window.blit(font.render(f"Action: {env.actions[action]}", True, "lightpink2"), (245, 600))
         window.blit(font.render(f"Reward: {reward_total}", True, "lightpink2"), (245, 630))
